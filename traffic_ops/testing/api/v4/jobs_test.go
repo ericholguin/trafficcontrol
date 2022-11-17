@@ -66,7 +66,7 @@ func TestJobs(t *testing.T) {
 				},
 				"OK when VALID DSID parameter": {
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceId(t, "ds2")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceID(t, "ds2")())}}},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseHasLength(1),
 						validateInvalidationJobsFields(map[string]interface{}{"DeliveryService": "ds2"})),
 				},

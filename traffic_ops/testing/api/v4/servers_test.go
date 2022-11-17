@@ -71,7 +71,7 @@ func TestServers(t *testing.T) {
 				},
 				"OK when VALID DSID parameter": {
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceId(t, "test-ds-server-assignments")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceID(t, "test-ds-server-assignments")())}}},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1),
 						validateExpectedServers([]string{"test-ds-server-assignments", "test-mso-org-01"})),
 				},
@@ -107,13 +107,13 @@ func TestServers(t *testing.T) {
 				},
 				"VALID SERVER LIST when using TOPOLOGY BASED DSID parameter": {
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceId(t, "ds-top")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceID(t, "ds-top")())}}},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1),
 						validateExpectedServers([]string{"denver-mso-org-01"})),
 				},
 				"VALID SERVER TYPE when DS TOPOLOGY CONTAINS NO MIDS": {
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceId(t, "ds-based-top-with-no-mids")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsId": {strconv.Itoa(GetDeliveryServiceID(t, "ds-based-top-with-no-mids")())}}},
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1), validateServerTypeIsNotMid()),
 				},
 				"EMPTY RESPONSE when INVALID DSID parameter": {
@@ -594,7 +594,7 @@ func UpdateDSGetServerDSID(t *testing.T) {
 	var lastHeaderRewrite = "last header rewrite"
 
 	opts := client.NewRequestOptions()
-	opts.QueryParameters.Set("dsId", strconv.Itoa(GetDeliveryServiceId(t, xmlId)()))
+	opts.QueryParameters.Set("dsId", strconv.Itoa(GetDeliveryServiceID(t, xmlId)()))
 	servers, _, err := TOSession.GetServers(opts)
 	assert.RequireNoError(t, err, "Failed to get Servers: %v - alerts: %+v", err, servers.Alerts)
 	assert.RequireGreaterOrEqual(t, len(servers.Response), 1, "Failed to get at least one Server")

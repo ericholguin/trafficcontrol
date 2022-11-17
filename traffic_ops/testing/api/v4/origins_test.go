@@ -54,9 +54,9 @@ func TestOrigins(t *testing.T) {
 				},
 				"OK when VALID DELIVERYSERVICE parameter": {
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"deliveryservice": {strconv.Itoa(GetDeliveryServiceId(t, "ds1")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"deliveryservice": {strconv.Itoa(GetDeliveryServiceID(t, "ds1")())}}},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1),
-						validateOriginsFields(map[string]interface{}{"DeliveryServiceID": GetDeliveryServiceId(t, "ds1")()})),
+						validateOriginsFields(map[string]interface{}{"DeliveryServiceID": GetDeliveryServiceID(t, "ds1")()})),
 				},
 				"OK when VALID CACHEGROUP parameter": {
 					ClientSession: TOSession,
@@ -183,7 +183,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("originTenancyTest"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origintenancy.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant3")()),
@@ -195,7 +195,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testcg"),
 						CachegroupID:      util.Ptr(10000000),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.cachegroupId.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -206,7 +206,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testprofile"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.profileId.com"),
 						ProfileID:         util.Ptr(1000000),
 						Protocol:          util.Ptr("http"),
@@ -219,7 +219,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testcoordinate"),
 						CoordinateID:      util.Ptr(10000000),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.coordinate.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -230,7 +230,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testtenant"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.tenant.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(11111111),
@@ -241,7 +241,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testprotocol"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.protocol.com"),
 						Protocol:          util.Ptr("httttpppss"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -252,7 +252,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testip"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("test.ip.com"),
 						IPAddress:         util.Ptr("311.255.323.412"),
 						Protocol:          util.Ptr("http"),
@@ -264,7 +264,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testipv6"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin1.example.com"),
 						IP6Address:        util.Ptr("badipv6::addresss"),
 						Protocol:          util.Ptr("http"),
@@ -298,7 +298,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: tenant4UserSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testtenancy"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("testtenancy.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -310,7 +310,7 @@ func TestOrigins(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("testid"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("testid.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -335,7 +335,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						CachegroupID:      util.Ptr(1111111),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -348,7 +348,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						ProfileID:         util.Ptr(11111111),
 						Protocol:          util.Ptr("http"),
@@ -363,7 +363,7 @@ func TestOrigins(t *testing.T) {
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
 						CoordinateID:      util.Ptr(1111111),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -376,7 +376,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin1"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin1.example.com"),
 						Protocol:          util.Ptr("http"),
 						TenantID:          util.Ptr(1111111),
@@ -389,7 +389,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds1")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds1")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						Protocol:          util.Ptr("htttttpssss"),
 						TenantID:          util.Ptr(GetTenantID(t, "tenant1")()),
@@ -402,7 +402,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds2")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds2")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						IPAddress:         util.Ptr("300.254.123.1"),
 						Protocol:          util.Ptr("http"),
@@ -416,7 +416,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds2")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds2")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						IP6Address:        util.Ptr("test::42"),
 						Protocol:          util.Ptr("http"),
@@ -430,7 +430,7 @@ func TestOrigins(t *testing.T) {
 					RequestBody: tc.Origin{
 						Name:              util.Ptr("origin2"),
 						Cachegroup:        util.Ptr("originCachegroup"),
-						DeliveryServiceID: util.Ptr(GetDeliveryServiceId(t, "ds2")()),
+						DeliveryServiceID: util.Ptr(GetDeliveryServiceID(t, "ds2")()),
 						FQDN:              util.Ptr("origin2.example.com"),
 						Port:              util.Ptr(80000),
 						Protocol:          util.Ptr("http"),

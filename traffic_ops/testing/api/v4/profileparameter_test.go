@@ -19,31 +19,40 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/apache/trafficcontrol/lib/go-tc"
+	"github.com/apache/trafficcontrol/lib/go-util"
 	"github.com/apache/trafficcontrol/traffic_ops/testing/api/utils"
 	client "github.com/apache/trafficcontrol/traffic_ops/v4-client"
 )
 
-func TestDeliveryServicesEligible(t *testing.T) {
-	WithObjs(t, []TCObj{CDNs, Types, Tenants, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServiceCategories, DeliveryServices}, func() {
+func TestProfileParameter(t *testing.T) {
+	WithObjs(t, []TCObj{CDNs, Types, Parameters, Profiles}, func() {
 
-		methodTests := utils.TestCase[client.Session, client.RequestOptions, struct{}]{
-			"GET": {
+		methodTests := utils.TestCase[client.Session, client.RequestOptions, tc.PostProfileParam]{
+			"POST": {
 				"OK when VALID request": {
-					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: TOSession,
-					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1)),
+					RequestBody: tc.PostProfileParam{
+						ProfileID: util.Ptr(int64(GetProfileID(t, "ATS_EDGE_TIER_CACHE")())),
+						ParamIDs: util.Ptr([]int64{
+							int64(GetParameterID(t, "CONFIG proxy.config.allocator.enable_reclaim", "records.config", "INT 0")()),
+							int64(GetParameterID(t, "CONFIG proxy.config.allocator.max_overage", "records.config", "INT 3")()),
+						}),
+					},
+					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 			},
 		}
+
 		for method, testCases := range methodTests {
 			t.Run(method, func(t *testing.T) {
 				for name, testCase := range testCases {
 					switch method {
-					case "GET":
+					case "POST":
 						t.Run(name, func(t *testing.T) {
-							resp, reqInf, err := testCase.ClientSession.GetDeliveryServicesEligible(testCase.EndpointId(), testCase.RequestOpts)
+							alerts, reqInf, err := testCase.ClientSession.CreateProfileWithMultipleParameters(testCase.RequestBody, testCase.RequestOpts)
 							for _, check := range testCase.Expectations {
-								check(t, reqInf, resp.Response, resp.Alerts, err)
+								check(t, reqInf, nil, alerts, err)
 							}
 						})
 					}

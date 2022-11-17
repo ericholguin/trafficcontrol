@@ -34,12 +34,12 @@ func TestDeliveryServicesRegexes(t *testing.T) {
 		methodTests := utils.TestCase[client.Session, client.RequestOptions, tc.DeliveryServiceRegexPost]{
 			"GET": {
 				"OK when VALID request": {
-					EndpointId:    GetDeliveryServiceId(t, "ds1"),
+					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: TOSession,
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseHasLength(3)),
 				},
 				"OK when VALID ID parameter": {
-					EndpointId:    GetDeliveryServiceId(t, "ds1"),
+					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: TOSession,
 					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"id": {strconv.Itoa(getDSRegexID(t, "ds1"))}}},
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseHasLength(1)),
@@ -47,7 +47,7 @@ func TestDeliveryServicesRegexes(t *testing.T) {
 			},
 			"POST": {
 				"BAD REQUEST when MISSING REGEX PATTERN": {
-					EndpointId: GetDeliveryServiceId(t, "ds1"), ClientSession: TOSession,
+					EndpointId: GetDeliveryServiceID(t, "ds1"), ClientSession: TOSession,
 					RequestBody: tc.DeliveryServiceRegexPost{
 						Type:      GetTypeId(t, "HOST_REGEXP"),
 						SetNumber: 3,
@@ -85,7 +85,7 @@ func TestDeliveryServicesRegexes(t *testing.T) {
 }
 
 func getDSRegexID(t *testing.T, dsName string) int {
-	resp, _, err := TOSession.GetDeliveryServiceRegexesByDSID(GetDeliveryServiceId(t, dsName)(), client.RequestOptions{})
+	resp, _, err := TOSession.GetDeliveryServiceRegexesByDSID(GetDeliveryServiceID(t, dsName)(), client.RequestOptions{})
 	assert.RequireNoError(t, err, "Get Delivery Service Regex failed with error: %v", err)
 	assert.RequireGreaterOrEqual(t, len(resp.Response), 1, "Expected delivery service regex response object length 1, but got %d", len(resp.Response))
 	assert.RequireNotNil(t, resp.Response[0].ID, "Expected id to not be nil")
@@ -95,7 +95,7 @@ func getDSRegexID(t *testing.T, dsName string) int {
 
 func CreateTestDeliveryServicesRegexes(t *testing.T) {
 	for _, dsRegex := range testData.DeliveryServicesRegexes {
-		dsID := GetDeliveryServiceId(t, dsRegex.DSName)()
+		dsID := GetDeliveryServiceID(t, dsRegex.DSName)()
 		typeId := GetTypeId(t, dsRegex.TypeName)
 		dsRegexPost := tc.DeliveryServiceRegexPost{
 			Type:      typeId,

@@ -126,7 +126,7 @@ func validateServerUpdatesAreQueued(topologyDS string) utils.CkReqFunc {
 		topQueueUpdateResp := resp.(tc.TopologiesQueueUpdate)
 
 		opts := client.NewRequestOptions()
-		opts.QueryParameters.Set("dsId", strconv.Itoa(GetDeliveryServiceId(t, topologyDS)()))
+		opts.QueryParameters.Set("dsId", strconv.Itoa(GetDeliveryServiceID(t, topologyDS)()))
 		serversResponse, _, err := TOSession.GetServers(opts)
 		assert.RequireNoError(t, err, "Expected no error when getting servers: %v", err)
 

@@ -23,27 +23,27 @@ import (
 	client "github.com/apache/trafficcontrol/traffic_ops/v4-client"
 )
 
-func TestDeliveryServicesEligible(t *testing.T) {
-	WithObjs(t, []TCObj{CDNs, Types, Tenants, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServiceCategories, DeliveryServices}, func() {
+func TestDeliveryServicesIDCapacity(t *testing.T) {
+	WithObjs(t, []TCObj{CDNs, Types, Tenants, Users, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServerCapabilities, ServiceCategories, DeliveryServices, ServerServerCapabilities, DeliveryServicesRequiredCapabilities, DeliveryServiceServerAssignments}, func() {
 
 		methodTests := utils.TestCase[client.Session, client.RequestOptions, struct{}]{
 			"GET": {
 				"OK when VALID request": {
-					EndpointId:    GetDeliveryServiceID(t, "ds1"),
-					ClientSession: TOSession,
-					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1)),
+					EndpointId: GetDeliveryServiceID(t, "ds1"), ClientSession: TOSession,
+					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 			},
 		}
+
 		for method, testCases := range methodTests {
 			t.Run(method, func(t *testing.T) {
 				for name, testCase := range testCases {
 					switch method {
 					case "GET":
 						t.Run(name, func(t *testing.T) {
-							resp, reqInf, err := testCase.ClientSession.GetDeliveryServicesEligible(testCase.EndpointId(), testCase.RequestOpts)
+							resp, reqInf, err := testCase.ClientSession.GetDeliveryServiceCapacity(testCase.EndpointId(), testCase.RequestOpts)
 							for _, check := range testCase.Expectations {
-								check(t, reqInf, resp.Response, resp.Alerts, err)
+								check(t, reqInf, nil, resp.Alerts, err)
 							}
 						})
 					}

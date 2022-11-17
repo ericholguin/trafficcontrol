@@ -42,20 +42,20 @@ func TestSteeringTargets(t *testing.T) {
 		methodTests := utils.TestCase[client.Session, client.RequestOptions, tc.SteeringTargetNullable]{
 			"GET": {
 				"NOT MODIFIED when NO CHANGES made": {
-					EndpointId:    GetDeliveryServiceId(t, "ds1"),
+					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: steeringUserSession,
 					RequestOpts:   client.RequestOptions{Header: http.Header{rfc.IfModifiedSince: {tomorrow}}},
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusNotModified)),
 				},
 				"OK when VALID request": {
-					EndpointId:    GetDeliveryServiceId(t, "ds1"),
+					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: steeringUserSession,
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseHasLength(1),
-						validateSteeringTargetFields(map[string]interface{}{"DeliveryService": "ds1", "DeliveryServiceID": uint64(GetDeliveryServiceId(t, "ds1")()),
-							"Target": "ds2", "TargetID": uint64(GetDeliveryServiceId(t, "ds2")()), "Type": "STEERING_WEIGHT", "TypeID": GetTypeID(t, "STEERING_WEIGHT")(), "Value": util.JSONIntStr(42)})),
+						validateSteeringTargetFields(map[string]interface{}{"DeliveryService": "ds1", "DeliveryServiceID": uint64(GetDeliveryServiceID(t, "ds1")()),
+							"Target": "ds2", "TargetID": uint64(GetDeliveryServiceID(t, "ds2")()), "Type": "STEERING_WEIGHT", "TypeID": GetTypeID(t, "STEERING_WEIGHT")(), "Value": util.JSONIntStr(42)})),
 				},
 				"OK when CHANGES made": {
-					EndpointId:    GetDeliveryServiceId(t, "ds1"),
+					EndpointId:    GetDeliveryServiceID(t, "ds1"),
 					ClientSession: steeringUserSession,
 					RequestOpts:   client.RequestOptions{Header: http.Header{rfc.IfModifiedSince: {currentTimeRFC}}},
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
@@ -65,23 +65,23 @@ func TestSteeringTargets(t *testing.T) {
 				"OK when VALID request": {
 					ClientSession: steeringUserSession,
 					RequestBody: tc.SteeringTargetNullable{
-						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceId(t, "ds3")())),
-						TargetID:          util.Ptr(uint64(GetDeliveryServiceId(t, "ds4")())),
+						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceID(t, "ds3")())),
+						TargetID:          util.Ptr(uint64(GetDeliveryServiceID(t, "ds4")())),
 						Value:             util.Ptr(util.JSONIntStr(-12345)),
 						TypeID:            util.Ptr(GetTypeID(t, "STEERING_WEIGHT")()),
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
-						validateSteeringTargetUpdateCreateFields(GetDeliveryServiceId(t, "ds3")(),
-							map[string]interface{}{"DeliveryService": "ds3", "DeliveryServiceID": uint64(GetDeliveryServiceId(t, "ds3")()),
-								"Target": "ds4", "TargetID": uint64(GetDeliveryServiceId(t, "ds4")()), "Type": "STEERING_WEIGHT",
+						validateSteeringTargetUpdateCreateFields(GetDeliveryServiceID(t, "ds3")(),
+							map[string]interface{}{"DeliveryService": "ds3", "DeliveryServiceID": uint64(GetDeliveryServiceID(t, "ds3")()),
+								"Target": "ds4", "TargetID": uint64(GetDeliveryServiceID(t, "ds4")()), "Type": "STEERING_WEIGHT",
 								"TypeID": GetTypeID(t, "STEERING_WEIGHT")(), "Value": util.JSONIntStr(-12345)})),
 				},
 				"PRECONDITION FAILED when updating with IMS & IUS Headers": {
 					ClientSession: steeringUserSession,
 					RequestOpts:   client.RequestOptions{Header: http.Header{rfc.IfUnmodifiedSince: {currentTimeRFC}}},
 					RequestBody: tc.SteeringTargetNullable{
-						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceId(t, "ds3")())),
-						TargetID:          util.Ptr(uint64(GetDeliveryServiceId(t, "ds4")())),
+						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceID(t, "ds3")())),
+						TargetID:          util.Ptr(uint64(GetDeliveryServiceID(t, "ds4")())),
 						Value:             util.Ptr(util.JSONIntStr(-12345)),
 						Type:              util.Ptr("STEERING_WEIGHT"),
 						TypeID:            util.Ptr(GetTypeID(t, "STEERING_WEIGHT")()),
@@ -92,8 +92,8 @@ func TestSteeringTargets(t *testing.T) {
 					ClientSession: steeringUserSession,
 					RequestOpts:   client.RequestOptions{Header: http.Header{rfc.IfMatch: {rfc.ETag(currentTime)}}},
 					RequestBody: tc.SteeringTargetNullable{
-						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceId(t, "ds3")())),
-						TargetID:          util.Ptr(uint64(GetDeliveryServiceId(t, "ds4")())),
+						DeliveryServiceID: util.Ptr(uint64(GetDeliveryServiceID(t, "ds3")())),
+						TargetID:          util.Ptr(uint64(GetDeliveryServiceID(t, "ds4")())),
 						Value:             util.Ptr(util.JSONIntStr(-12345)),
 						Type:              util.Ptr("STEERING_WEIGHT"),
 						TypeID:            util.Ptr(GetTypeID(t, "STEERING_WEIGHT")()),
@@ -197,8 +197,8 @@ func CreateTestSteeringTargets(t *testing.T) {
 	steeringUserSession := utils.CreateV4Session(t, Config.TrafficOps.URL, "steering", "pa$$word", Config.Default.Session.TimeoutInSecs)
 	for _, st := range testData.SteeringTargets {
 		st.TypeID = util.IntPtr(GetTypeID(t, *st.Type)())
-		st.DeliveryServiceID = util.UInt64Ptr(uint64(GetDeliveryServiceId(t, string(*st.DeliveryService))()))
-		st.TargetID = util.UInt64Ptr(uint64(GetDeliveryServiceId(t, string(*st.Target))()))
+		st.DeliveryServiceID = util.UInt64Ptr(uint64(GetDeliveryServiceID(t, string(*st.DeliveryService))()))
+		st.TargetID = util.UInt64Ptr(uint64(GetDeliveryServiceID(t, string(*st.Target))()))
 		resp, _, err := steeringUserSession.CreateSteeringTarget(st, client.RequestOptions{})
 		assert.RequireNoError(t, err, "Creating steering target: %v - alerts: %+v", err, resp.Alerts)
 	}

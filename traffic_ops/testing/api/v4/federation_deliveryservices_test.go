@@ -96,13 +96,13 @@ func TestFederationsDeliveryServices(t *testing.T) {
 				"OK when VALID request": {
 					EndpointId:    GetFederationID(t, "the.cname.com."),
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsID": {strconv.Itoa(GetDeliveryServiceId(t, "ds1")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsID": {strconv.Itoa(GetDeliveryServiceID(t, "ds1")())}}},
 					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 				"BAD REQUEST when LAST DELIVERY SERVICE": {
 					EndpointId:    GetFederationID(t, "google.com."),
 					ClientSession: TOSession,
-					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsID": {strconv.Itoa(GetDeliveryServiceId(t, "ds2")())}}},
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"dsID": {strconv.Itoa(GetDeliveryServiceID(t, "ds2")())}}},
 					Expectations:  utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
 				},
 			},
@@ -190,11 +190,11 @@ func CreateTestFederationDeliveryServices(t *testing.T) {
 	// Prerequisite Federation Delivery Services
 	federationDS := map[string]tc.FederationDSPost{
 		"the.cname.com.": {
-			DSIDs:   []int{GetDeliveryServiceId(t, "ds1")(), GetDeliveryServiceId(t, "ds2")(), GetDeliveryServiceId(t, "ds3")(), GetDeliveryServiceId(t, "ds4")()},
+			DSIDs:   []int{GetDeliveryServiceID(t, "ds1")(), GetDeliveryServiceID(t, "ds2")(), GetDeliveryServiceID(t, "ds3")(), GetDeliveryServiceID(t, "ds4")()},
 			Replace: util.BoolPtr(true),
 		},
 		"google.com.": {
-			DSIDs:   []int{GetDeliveryServiceId(t, "ds1")()},
+			DSIDs:   []int{GetDeliveryServiceID(t, "ds1")()},
 			Replace: util.BoolPtr(true),
 		},
 	}

@@ -33,87 +33,99 @@ func TestDeliveryServiceServers(t *testing.T) {
 
 		tomorrow := time.Now().UTC().AddDate(0, 0, 1).Format(time.RFC1123)
 
-		dssTests := utils.V4TestCase{
+		methodTests := utils.TestCase[client.Session, client.RequestOptions, map[string]interface{}]{
 			"GET": {
 				"NOT MODIFIED when NO CHANGES made": {
-					ClientSession: TOSession, RequestOpts: client.RequestOptions{Header: http.Header{rfc.IfModifiedSince: {tomorrow}}},
-					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusNotModified)),
+					ClientSession: TOSession,
+					RequestOpts:   client.RequestOptions{Header: http.Header{rfc.IfModifiedSince: {tomorrow}}},
+					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusNotModified)),
 				},
 				"OK when VALID request": {
-					ClientSession: TOSession, Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
+					ClientSession: TOSession,
+					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 				"OK when VALID CDN parameter": {
-					ClientSession: TOSession, RequestOpts: client.RequestOptions{QueryParameters: url.Values{"cdn": {"cdn1"}}},
-					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1)),
+					ClientSession: TOSession,
+					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"cdn": {"cdn1"}}},
+					Expectations:  utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK), utils.ResponseLengthGreaterOrEqual(1)),
 				},
 			},
 			"POST": {
 				"OK when VALID request": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "ds3")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "ds3")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "atlanta-edge-01")(), GetServerID(t, "atlanta-edge-03")()},
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 				"OK when ASSIGNING ORG SERVER IN CACHEGROUP of TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "ds-top")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "ds-top")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "denver-mso-org-01")()},
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 				"BAD REQUEST when ASSIGNING ORG SERVER NOT IN CACHEGROUP of TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "ds-top-req-cap")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "ds-top-req-cap")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "denver-mso-org-01")()},
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
 				},
 				"BAD REQUEST when ASSIGNING SERVERS to a TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "ds-top")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "ds-top")(),
 						"servers": []int{GetServerID(t, "atlanta-edge-01")(), GetServerID(t, "atlanta-edge-03")()},
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
 				},
 				"CONFLICT when REMOVING ONLY EDGE SERVER ASSIGNMENT": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "test-ds-server-assignments")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "test-ds-server-assignments")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "test-mso-org-01")()},
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
 				},
 				"CONFLICT when REMOVING ONLY ORIGIN SERVER ASSIGNMENT": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "test-ds-server-assignments")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "test-ds-server-assignments")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "test-ds-server-assignments")()},
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
 				},
 				"CONFLICT when REPLACING EDGE SERVER ASSIGNMENT with EDGE SERVER in BAD STATE": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "test-ds-server-assignments")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "test-ds-server-assignments")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "admin-down-server")()},
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
 				},
 				"OK when MAKING ASSIGNMENTS when DELIVERY SERVICE AND SERVER HAVE MATCHING CAPABILITIES": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "ds2")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "ds2")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "atlanta-org-2")()},
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
 				},
 				"OK when ASSIGNING a ORIGIN server to a DS with REQUIRED CAPABILITY": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"dsId":    GetDeliveryServiceId(t, "msods1")(),
+					ClientSession: TOSession,
+					RequestBody: map[string]interface{}{
+						"dsId":    GetDeliveryServiceID(t, "msods1")(),
 						"replace": true,
 						"servers": []int{GetServerID(t, "denver-mso-org-01")()},
 					},
@@ -121,7 +133,7 @@ func TestDeliveryServiceServers(t *testing.T) {
 				},
 			},
 		}
-		for method, testCases := range dssTests {
+		for method, testCases := range methodTests {
 			t.Run(method, func(t *testing.T) {
 				for name, testCase := range testCases {
 					var dsID int
@@ -153,149 +165,6 @@ func TestDeliveryServiceServers(t *testing.T) {
 							resp, reqInf, err := testCase.ClientSession.CreateDeliveryServiceServers(dsID, serverIDs, replace, testCase.RequestOpts)
 							for _, check := range testCase.Expectations {
 								check(t, reqInf, resp.Response, resp.Alerts, err)
-							}
-						})
-					}
-				}
-			})
-		}
-	})
-}
-
-func TestDeliveryServiceXMLIDServers(t *testing.T) {
-	WithObjs(t, []TCObj{CDNs, Types, Tenants, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServiceCategories, DeliveryServices, DeliveryServiceServerAssignments}, func() {
-		dsXMLIDServersTests := utils.V4TestCase{
-			"POST": {
-				"BAD REQUEST when ASSIGNING SERVERS to a TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"xmlID":       "ds-top",
-						"serverNames": []string{"atlanta-edge-01", "atlanta-edge-03"},
-					},
-					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
-				},
-				"BAD REQUEST when ASSIGNING ORG SERVER NOT IN CACHEGROUP of TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"xmlID":       "ds-top-req-cap",
-						"serverNames": []string{"denver-mso-org-01"},
-					},
-					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
-				},
-				"OK when ASSIGNING ORG SERVER IN CACHEGROUP of TOPOLOGY DS": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"xmlID":       "ds-top",
-						"serverNames": []string{"test-mso-org-01"},
-					},
-					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
-				},
-			},
-		}
-		for method, testCases := range dsXMLIDServersTests {
-			t.Run(method, func(t *testing.T) {
-				for name, testCase := range testCases {
-					var xmlID string
-					var servers []string
-
-					if testCase.RequestBody != nil {
-						if val, ok := testCase.RequestBody["xmlID"]; ok {
-							xmlID = val.(string)
-						}
-						if val, ok := testCase.RequestBody["serverNames"]; ok {
-							servers = val.([]string)
-						}
-					}
-
-					switch method {
-					case "POST":
-						t.Run(name, func(t *testing.T) {
-							resp, reqInf, err := testCase.ClientSession.AssignServersToDeliveryService(servers, xmlID, testCase.RequestOpts)
-							for _, check := range testCase.Expectations {
-								check(t, reqInf, nil, resp, err)
-							}
-						})
-					}
-				}
-			})
-		}
-	})
-}
-
-func TestDeliveryServicesIDServers(t *testing.T) {
-	WithObjs(t, []TCObj{CDNs, Types, Tenants, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServiceCategories, DeliveryServices, DeliveryServiceServerAssignments}, func() {
-		dsIDServersTests := utils.V4TestCase{
-			"GET": {
-				"OK when VALID request": {
-					EndpointId: GetDeliveryServiceId(t, "test-ds-server-assignments"), ClientSession: TOSession,
-					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
-						utils.ResponseHasLength(2)),
-				},
-			},
-		}
-		for method, testCases := range dsIDServersTests {
-			t.Run(method, func(t *testing.T) {
-				for name, testCase := range testCases {
-					switch method {
-					case "GET":
-						t.Run(name, func(t *testing.T) {
-							resp, reqInf, err := testCase.ClientSession.GetServersByDeliveryService(testCase.EndpointId(), testCase.RequestOpts)
-							for _, check := range testCase.Expectations {
-								check(t, reqInf, resp.Response, resp.Alerts, err)
-							}
-						})
-					}
-				}
-			})
-		}
-	})
-}
-
-func TestDeliveryServicesDSIDServerID(t *testing.T) {
-	WithObjs(t, []TCObj{CDNs, Types, Tenants, Parameters, Profiles, Statuses, Divisions, Regions, PhysLocations, CacheGroups, Servers, Topologies, ServiceCategories, DeliveryServices, DeliveryServiceServerAssignments}, func() {
-		dssDSIDServerIDTests := utils.V4TestCase{
-			"DELETE": {
-				"OK when VALID REQUEST": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"server": GetServerID(t, "denver-mso-org-01")(),
-						"dsId":   GetDeliveryServiceId(t, "ds-top")(),
-					},
-					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
-				},
-				"BAD REQUEST when REMOVING ONLY EDGE SERVER ASSIGNMENT": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"server": GetServerID(t, "test-ds-server-assignments")(),
-						"dsId":   GetDeliveryServiceId(t, "test-ds-server-assignments")(),
-					},
-					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
-				},
-				"BAD REQUEST when REMOVING ONLY ORIGIN SERVER ASSIGNMENT": {
-					ClientSession: TOSession, RequestBody: map[string]interface{}{
-						"server": GetServerID(t, "test-mso-org-01")(),
-						"dsId":   GetDeliveryServiceId(t, "test-ds-server-assignments")(),
-					},
-					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
-				},
-			},
-		}
-		for method, testCases := range dssDSIDServerIDTests {
-			t.Run(method, func(t *testing.T) {
-				for name, testCase := range testCases {
-					var dsID int
-					var serverId int
-
-					if testCase.RequestBody != nil {
-						if val, ok := testCase.RequestBody["server"]; ok {
-							serverId = val.(int)
-						}
-						if val, ok := testCase.RequestBody["dsId"]; ok {
-							dsID = val.(int)
-						}
-					}
-
-					switch method {
-					case "DELETE":
-						t.Run(name, func(t *testing.T) {
-							resp, reqInf, err := testCase.ClientSession.DeleteDeliveryServiceServer(dsID, serverId, testCase.RequestOpts)
-							for _, check := range testCase.Expectations {
-								check(t, reqInf, nil, resp, err)
 							}
 						})
 					}

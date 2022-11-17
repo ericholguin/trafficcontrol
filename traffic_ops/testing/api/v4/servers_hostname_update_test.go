@@ -37,13 +37,13 @@ func TestServersHostnameUpdate(t *testing.T) {
 		// with the loss of precision. Also, it appears to Round and not Truncate.
 		now := time.Now().Round(time.Microsecond)
 
-		methodTests := utils.V4TestCase{
+		methodTests := utils.TestCase[client.Session, client.RequestOptions, map[string]*time.Time]{
 			"POST": {
 				"OK when VALID CONFIG_APPLY_TIME PARAMETER": {
 					ClientSession: TOSession,
 					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"hostName": {"atlanta-edge-01"}}},
-					RequestBody: map[string]interface{}{
-						"config_apply_time": util.TimePtr(now),
+					RequestBody: map[string]*time.Time{
+						"config_apply_time": util.Ptr(now),
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
 						validateServerApplyTimes("atlanta-edge-01", map[string]interface{}{"ConfigApplyTime": now})),
@@ -51,8 +51,8 @@ func TestServersHostnameUpdate(t *testing.T) {
 				"OK when VALID REVALIDATE_APPLY_TIME PARAMETER": {
 					ClientSession: TOSession,
 					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"hostName": {"cdn2-test-edge"}}},
-					RequestBody: map[string]interface{}{
-						"revalidate_apply_time": util.TimePtr(now),
+					RequestBody: map[string]*time.Time{
+						"revalidate_apply_time": util.Ptr(now),
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
 						validateServerApplyTimes("cdn2-test-edge", map[string]interface{}{"RevalApplyTime": now})),
@@ -60,16 +60,16 @@ func TestServersHostnameUpdate(t *testing.T) {
 				"BAD REQUEST when UPDATED AND CONFIG_APPLY_TIME PARAMETER": {
 					ClientSession: TOSession,
 					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"hostName": {"atlanta-edge-01"}, "updated": {"true"}}},
-					RequestBody: map[string]interface{}{
-						"config_apply_time": util.TimePtr(now),
+					RequestBody: map[string]*time.Time{
+						"config_apply_time": util.Ptr(now),
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
 				},
 				"BAD REQUEST when REVAL_UPDATED AND REVALIDATE_APPLY_TIME PARAMETER": {
 					ClientSession: TOSession,
 					RequestOpts:   client.RequestOptions{QueryParameters: url.Values{"hostName": {"atlanta-edge-01"}, "reval_updated": {"true"}}},
-					RequestBody: map[string]interface{}{
-						"revalidate_apply_time": util.TimePtr(now),
+					RequestBody: map[string]*time.Time{
+						"revalidate_apply_time": util.Ptr(now),
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
 				},
@@ -88,11 +88,11 @@ func TestServersHostnameUpdate(t *testing.T) {
 					}
 
 					if configApplyTimeVal, ok := testCase.RequestBody["config_apply_time"]; ok {
-						configApplyTime = configApplyTimeVal.(*time.Time)
+						configApplyTime = configApplyTimeVal
 					}
 
 					if revalApplyTimeVal, ok := testCase.RequestBody["revalidate_apply_time"]; ok {
-						revalApplyTime = revalApplyTimeVal.(*time.Time)
+						revalApplyTime = revalApplyTimeVal
 					}
 
 					switch method {

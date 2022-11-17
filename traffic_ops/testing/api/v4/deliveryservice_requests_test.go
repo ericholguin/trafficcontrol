@@ -80,11 +80,11 @@ func TestDeliveryServiceRequests(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
 						"changeType": "create",
-						"requested": generateDeliveryService(t, map[string]interface{}{
-							"displayName": "NEW DISPLAY NAME",
-							"tenantId":    GetTenantID(t, "tenant1")(),
-							"xmlId":       "test-ds1",
-						}),
+						//"requested": generateDeliveryService(t, map[string]interface{}{
+						//	"displayName": "NEW DISPLAY NAME",
+						//	"tenantId":    GetTenantID(t, "tenant1")(),
+						//	"xmlId":       "test-ds1",
+						//}),
 						"status": "draft",
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK)),
@@ -94,10 +94,10 @@ func TestDeliveryServiceRequests(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
 						"changeType": "create",
-						"requested": generateDeliveryService(t, map[string]interface{}{
-							"tenantId": GetTenantID(t, "tenant1")(),
-							"xmlId":    "test-ds1",
-						}),
+						//"requested": generateDeliveryService(t, map[string]interface{}{
+						//	"tenantId": GetTenantID(t, "tenant1")(),
+						//	"xmlId":    "test-ds1",
+						//}),
 						"status": "submitted",
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
@@ -108,12 +108,12 @@ func TestDeliveryServiceRequests(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
 						"changeType": "create",
-						"requested": generateDeliveryService(t, map[string]interface{}{
-							"longDesc1": "long desc 1",
-							"longDesc2": "long desc 2",
-							"tenantId":  GetTenantID(t, "tenant1")(),
-							"xmlId":     "test-ds1",
-						}),
+						//"requested": generateDeliveryService(t, map[string]interface{}{
+						//	"longDesc1": "long desc 1",
+						//	"longDesc2": "long desc 2",
+						//	"tenantId":  GetTenantID(t, "tenant1")(),
+						//	"xmlId":     "test-ds1",
+						//}),
 						"status": "draft",
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
@@ -138,17 +138,17 @@ func TestDeliveryServiceRequests(t *testing.T) {
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
 						"changeType": "create",
-						"requested": generateDeliveryService(t, map[string]interface{}{
-							"ccrDnsTtl":          30,
-							"deepCachingType":    "NEVER",
-							"initialDispersion":  3,
-							"ipv6RoutingEnabled": true,
-							"longDesc":           "long desc",
-							"orgServerFqdn":      "http://example.test",
-							"profileName":        nil,
-							"tenant":             "root",
-							"xmlId":              "test-ds2",
-						}),
+						//"requested": generateDeliveryService(t, map[string]interface{}{
+						//	"ccrDnsTtl":          30,
+						//	"deepCachingType":    "NEVER",
+						//	"initialDispersion":  3,
+						//	"ipv6RoutingEnabled": true,
+						//	"longDesc":           "long desc",
+						//	"orgServerFqdn":      "http://example.test",
+						//	"profileName":        nil,
+						//	"tenant":             "root",
+						//	"xmlId":              "test-ds2",
+						//}),
 						"status": "draft",
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusCreated)),

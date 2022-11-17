@@ -33,7 +33,7 @@ func TestServersIDDeliveryServices(t *testing.T) {
 		currentTime := time.Now().UTC().Add(-15 * time.Second)
 		tomorrow := currentTime.AddDate(0, 0, 1).Format(time.RFC1123)
 
-		methodTests := utils.V4TestCase{
+		methodTests := utils.TestCase[client.Session, client.RequestOptions, map[string]interface{}]{
 			"GET": {
 				"NOT MODIFIED when NO CHANGES made": {
 					EndpointId:    GetServerID(t, "atlanta-edge-14"),
@@ -52,37 +52,37 @@ func TestServersIDDeliveryServices(t *testing.T) {
 					EndpointId:    GetServerID(t, "atlanta-edge-01"),
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
-						"dsIds":   []int{GetDeliveryServiceId(t, "ds1")()},
+						"dsIds":   []int{GetDeliveryServiceID(t, "ds1")()},
 						"replace": true,
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
-						validateServersDeliveryServicesPost(GetServerID(t, "atlanta-edge-01")(), GetDeliveryServiceId(t, "ds1")())),
+						validateServersDeliveryServicesPost(GetServerID(t, "atlanta-edge-01")(), GetDeliveryServiceID(t, "ds1")())),
 				},
 				"OK when ASSIGNING EDGE to TOPOLOGY BASED DELIVERY SERVICE": {
 					EndpointId:    GetServerID(t, "atlanta-edge-03"),
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
-						"dsIds":   []int{GetDeliveryServiceId(t, "top-ds-in-cdn1")()},
+						"dsIds":   []int{GetDeliveryServiceID(t, "top-ds-in-cdn1")()},
 						"replace": true,
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
-						validateServersDeliveryServicesPost(GetServerID(t, "atlanta-edge-03")(), GetDeliveryServiceId(t, "top-ds-in-cdn1")())),
+						validateServersDeliveryServicesPost(GetServerID(t, "atlanta-edge-03")(), GetDeliveryServiceID(t, "top-ds-in-cdn1")())),
 				},
 				"OK when ASSIGNING ORIGIN to TOPOLOGY BASED DELIVERY SERVICE": {
 					EndpointId:    GetServerID(t, "denver-mso-org-01"),
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
-						"dsIds":   []int{GetDeliveryServiceId(t, "ds-top")()},
+						"dsIds":   []int{GetDeliveryServiceID(t, "ds-top")()},
 						"replace": true,
 					},
 					Expectations: utils.CkRequest(utils.NoError(), utils.HasStatus(http.StatusOK),
-						validateServersDeliveryServicesPost(GetServerID(t, "denver-mso-org-01")(), GetDeliveryServiceId(t, "ds-top")())),
+						validateServersDeliveryServicesPost(GetServerID(t, "denver-mso-org-01")(), GetDeliveryServiceID(t, "ds-top")())),
 				},
 				"CONFLICT when SERVER NOT IN SAME CDN as DELIVERY SERVICE": {
 					EndpointId:    GetServerID(t, "cdn2-test-edge"),
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
-						"dsIds":   []int{GetDeliveryServiceId(t, "ds1")()},
+						"dsIds":   []int{GetDeliveryServiceID(t, "ds1")()},
 						"replace": true,
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusConflict)),
@@ -91,7 +91,7 @@ func TestServersIDDeliveryServices(t *testing.T) {
 					EndpointId:    GetServerID(t, "denver-mso-org-01"),
 					ClientSession: TOSession,
 					RequestBody: map[string]interface{}{
-						"dsIds":   []int{GetDeliveryServiceId(t, "ds-top-req-cap")()},
+						"dsIds":   []int{GetDeliveryServiceID(t, "ds-top-req-cap")()},
 						"replace": true,
 					},
 					Expectations: utils.CkRequest(utils.HasError(), utils.HasStatus(http.StatusBadRequest)),
