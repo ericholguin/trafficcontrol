@@ -1,5 +1,19 @@
 {
+	"cachegroups": [{
+		"name": "test",
+		"domainName": "quest",
+		"dnssecEnabled": false,
+		"id": null,
+		"lastUpdated": null
+	}],
 	"cdns": [{
+		"name": "test",
+		"domainName": "quest",
+		"dnssecEnabled": false,
+		"id": null,
+		"lastUpdated": null
+	}],
+	"divisions": [{
 		"name": "test",
 		"domainName": "quest",
 		"dnssecEnabled": false,
