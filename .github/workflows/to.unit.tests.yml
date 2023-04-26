@@ -70,6 +70,7 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
+          functionalities: --fixes
           files: traffic_ops-coverage.out
           flags: traffic_ops_unit
       - name: Save Alpine Docker image
